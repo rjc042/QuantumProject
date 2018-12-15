@@ -7,7 +7,6 @@ def get_psi_mod_x0(psi_x, k, x, dx):
     psi_mod_x = psi_x * np.exp(-1j * k[0] * x) * dx / np.sqrt(2 * np.pi)
     return psi_mod_x
 
-
 def get_psi_mod_x(psi_mod_k):
     psi_mod_x = fftpack.ifft(psi_mod_k)
     return psi_mod_x

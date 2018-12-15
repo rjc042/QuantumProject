@@ -19,7 +19,7 @@ def init_plot_x(xlimx, ylimx):
     ax1.set_ylabel(r'$|\psi(x)|$')
     return (line_psix, line_V)
 
-
+  
 def init_plot_k(xlimk, ylimk):
     ''' Initialize momentum space plot '''
     ax2 = fig.add_subplot(212, xlim=xlimk, ylim=ylimk)
