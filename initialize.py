@@ -30,9 +30,6 @@ def square_well(x,h,w):
     V_x[x > 98] = 1E6
     return V_x
 
-
-
-
 def get_k0(x, dk, k0=None):
     ''' Set momentum scale '''
     if k0 == None:

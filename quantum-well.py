@@ -38,21 +38,13 @@ k0 = p0 / hbar
 v0 = p0 / m
 
 
+# Initial wavefunctions
 psi_x = gauss_x(x, d, x0, k0)
-
 k0 = -28
 k = get_k(x, dk, k0)
-
-
-
-
 psi_mod_x = get_psi_mod_x0(psi_x, k, x, dx)
 psi_mod_k = get_psi_mod_k(psi_mod_x)
 psi_k = get_psi_k(psi_mod_k,x,dk)
-
-
-
-
 
 
 # Initialize position plot
@@ -67,14 +59,12 @@ line_psik = init_plot_k(xlimk, ylim_k)
 
 
 
-
 dt = 0.1                # Time step
 t_max = 20              # Runs over time t=0 to t=20
 N_steps = 20            # Advance wavefunctions by N_steps time steps before their plots are drawn again
 t = 0
 for i in range(int(t_max / dt)):
     for j in range(N_steps):
-
         psi_mod_x, psi_mod_k = advance_mod_dt(psi_mod_x, psi_mod_k, V_x, k, dt, dx)
         psi_x, psi_k = advance_dt(psi_mod_x, psi_mod_k, x, k, dx, dk)
 
