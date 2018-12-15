@@ -17,7 +17,7 @@ m = 1.0      # Particle mass
 
 # Position axis
 dx = 0.1                    # Increments in x-space
-N = 2 ** 11                 # Number of steps in x-axis
+N = int(2e11)                 # Number of steps in x-axis
 x = get_xns(dx, N)          # x-axis
 
 dk = 2 * np.pi / (dx * N)   # Increments in k-space

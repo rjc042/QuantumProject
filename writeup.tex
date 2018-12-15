@@ -1,0 +1,187 @@
+\documentclass{booknotes}
+
+\begin{document}
+
+
+	\begin{center}
+	\Large{
+	Dynamics of a One-Dimensional Quantum System via Split-Step Fourier Method } 
+	\end{center}
+	
+In this project, we study the dynamics of a particle in one-dimensional quantum system equipped with a potantial barrier.
+The particle's wavefunction starts as a Gaussian and evolves according to the time-dependent Schrodinger equation (TDSE),
+	\begin{align}
+	\label{eq::tdse}
+	\frac { - \hbar ^ { 2 } } { 2 m } \frac { \partial ^ { 2 } \psi } { \partial x ^ { 2 } } + V \psi  =
+	i \hbar \frac { \partial \psi } { \partial t }.
+	\end{align}
+
+
+We solve the time-evolved solution numerically using the split-step Fourier method.
+The wavefunction of the particle in momentum space is the Fourier transform of its position space wavefunction.
+That is,
+	\begin{align}
+	\widetilde { \psi } ( k , t ) = \frac { 1 } { \sqrt { 2 \pi } } \int _ { - \infty } ^ { \infty } \psi ( x , t ) e ^ { - i k x } d x.
+	\end{align}
+We can then obtain the position space wavefunction by taking an inverse Fourier transform on the momentum space wavefunction, 
+	\begin{align}
+	\psi ( x , t ) = \frac { 1 } { \sqrt { 2 \pi } } \int _ { - \infty } ^ { \infty } \widetilde { \psi } ( k , t ) e ^ { i k x } d k.
+	\end{align}
+However, these quantities are still continuous variables. In order to evolve the system numerically, we need to discretize both $x$-space and $k$-space.
+
+But first, let's determine another useful form of the TDSE using the above expression for $\psi(x,t)$.
+Plugging this into the Equation (\ref{eq::tdse}), we have,
+	\begin{align}
+	&-\frac { \hbar ^ { 2 } } { 2 m } \pdv[2]{}{x}
+	\left[ \frac { 1 } { \sqrt { 2 \pi } } \int _ { - \infty } ^ { \infty } \widetilde { \psi } ( k , t ) e ^ { i k x } d k \right]
+	+ V \left( \frac { 1 } { \sqrt { 2 \pi } } \int _ { - \infty } ^ { \infty } \widetilde { \psi } ( k , t ) e ^ { i k x } d k \right) \\
+	& \qquad \qquad \qquad \qquad 
+	=
+	i \hbar \pdv{}{t}
+	\left[ \frac { 1 } { \sqrt { 2 \pi } } \int _ { - \infty } ^ { \infty } \widetilde { \psi } ( k , t ) e ^ { i k x } d k \right]\\
+	%
+	%
+	%
+	\end{align}
+	
+	\begin{align}
+	\Rightarrow 
+	-\frac {  \hbar ^ { 2 } } { 2 m } \pdv[2]{}{x}
+	\left[ \int _ { - \infty } ^ { \infty } \widetilde { \psi } ( k , t ) e ^ { i k x } d k \right]
+	+ V  \int _ { - \infty } ^ { \infty } \widetilde { \psi } ( k , t ) e ^ { i k x } d k 
+	&= i \hbar \pdv{}{t}
+	\left[ \int _ { - \infty } ^ { \infty } \widetilde { \psi } ( k , t ) e ^ { i k x } d k \right]\\
+	%
+	%
+	%
+	\Rightarrow -\frac {  \hbar ^ { 2 } } { 2 m }
+	\int _ { - \infty } ^ { \infty } (-k^2) \widetilde { \psi } ( k , t ) e ^ { i k x } d k
+	+ V  \int _ { - \infty } ^ { \infty } \widetilde { \psi } ( k , t ) e ^ { i k x } d k 
+	&= i \hbar \pdv{}{t}
+	\left[ \int _ { - \infty } ^ { \infty } \widetilde { \psi } ( k , t ) e ^ { i k x } d k \right]\\
+	%
+	%
+	%
+	\Rightarrow  \int _ { - \infty } ^ { \infty } \left[
+	\frac{\hbar^2 k^2}{2m} \widetilde { \psi } ( k , t ) e ^ { i k x } 
+	+ V \widetilde { \psi } ( k , t ) e ^ { i k x } \right]  dk
+	&= \int _ { - \infty } ^ { \infty } \left[
+	i \hbar \pdv{}{t} \widetilde { \psi } ( k , t )e ^ { i k x } \right] d k 
+	\end{align}
+
+Since this equality holds for integration over all $k$-space, it follows that the integrands must also be equal. Thus,
+	\begin{align}
+	\frac{\hbar^2 k^2}{2m} \widetilde { \psi } ( k , t ) e ^ { i k x } 
+	+ V \widetilde { \psi } ( k , t ) e ^ { i k x }
+	&=
+	i \hbar \pdv{}{t} \widetilde { \psi } ( k , t )e ^ { i k x }\\
+	%
+	\Rightarrow \frac{\hbar^2 k^2}{2m} \widetilde { \psi } ( k , t ) 
+	+ V \widetilde { \psi } ( k , t ) 
+	&=
+	i \hbar \pdv{\widetilde { \psi }}{t}.\\
+	\end{align}
+
+We use both the original TDSE in $x$-space and the transformed equation in $k$-space to develop our numerical solutions. We look to solve first-order differential equations in time. 
+Since the kinetic term in the position space TDSE contains a second-order derivative, we omit this term and solve,
+	\begin{align}
+	V(x) \psi(x,t) &= i \hbar \pdv{\psi}{t} 
+	\end{align}
+for $\psi(x,t)$ to determine the contribution of the potential on the wavefunction. 
+We see that,
+	\begin{align}
+	V(x) \psi(x,t) &= i \hbar \pdv{\psi}{t} \\
+	\Rightarrow \frac{1}{\psi} d\psi &= -\frac{iV(x)}{\hbar} dt\\
+	\Rightarrow \int  \frac{1}{\psi} d\psi &= \int -\frac{iV(x)}{\hbar} dt\\
+	\Rightarrow \ln \psi &= -\frac{iV(x)}{\hbar} t + const\\
+	\Rightarrow \psi(x,t) &= A \text{exp} \left[-\frac{iV(x)}{\hbar} t \right].
+	\end{align}
+This describes the contribution of the potential on the wavefunction's time-evolution.
+
+In addition to discretizing our $x$-space and $k$-space, we also need to increment our time-evolution in non-infinitesimal steps. 
+If we evolve the above position space wavefunction by $\Delta t$, we see
+	\begin{align}
+	 \psi(x,t+\Delta t) &= A \text{exp} \left[-\frac{iV(x)}{\hbar} (t+\Delta t) \right]\\
+	 &= A \text{exp} \left[-\frac{iV(x)}{\hbar} t \right]\text{exp} \left[-\frac{iV(x)}{\hbar} \Delta t\right]\\
+	 \Rightarrow \psi(x,t+\Delta t)  &=  \psi(x,t) \text{exp} \left[-\frac{iV(x)}{\hbar} \Delta t\right].
+	\end{align}
+That is, to evolve our position space wavefunction by a single time step, we multiply it by a factor of  
+$\text{exp} \left[-\frac{iV(x)}{\hbar} \Delta t\right]$.
+
+
+
+
+
+To get the contribution of kinetic energy to our solution, we use the the $k$-space TDSE and omit the interaction term,
+	\begin{align}
+	\frac { \hbar ^ { 2 } k ^ { 2 } } { 2 m } \widetilde { \psi }&=i \hbar \frac { \partial \widetilde { \psi } } { \partial t }\\
+	\Rightarrow \frac{1}{\widetilde { \psi }} d \widetilde { \psi }
+	&=-i \frac { \hbar k ^ { 2 } } { 2 m }dt \\
+	 \Rightarrow \int \frac{1}{\widetilde { \psi }} d \widetilde { \psi }
+	&= \int-i \frac { \hbar k ^ { 2 } } { 2 m }dt \\
+	\Rightarrow \ln \widetilde { \psi } &= -i \frac { \hbar k ^ { 2 } } { 2 m } t + const\\
+	\Rightarrow \widetilde { \psi } (k,t) &= B  \text{exp} \left[-i \frac { \hbar k ^ { 2 } } { 2 m }  t\right].
+	\end{align}
+
+Similarly, to evolve this momentum space wavefunction by $\Delta t$, we have,
+	\begin{align}
+	\widetilde { \psi } (k,t+\Delta t) &= B  \text{exp} \left[-i \frac { \hbar k ^ { 2 } } { 2 m } (t +\Delta t)\right]\\
+	&= B  \text{exp} \left[-i \frac { \hbar k ^ { 2 } } { 2 m } t\right]\text{exp} \left[-i \frac { \hbar k ^ { 2 } } { 2 m }  \Delta t\right]\\
+	\Rightarrow \widetilde { \psi } (k,t+\Delta t) &=\widetilde { \psi } (k, t)
+	\text{exp} \left[-i \frac { \hbar k ^ { 2 } } { 2 m }  \Delta t\right]\\
+	\end{align}
+
+To evolve this momentum space wavefunction by a single time step, we multiply by
+$e^{-i \frac { \hbar k ^ { 2 } } { 2 m }  \Delta t}$
+
+
+
+
+
+Note that we can't repeatedly evolve a wavefunction in one particular space and get accurate results. Neither of the solutions derived above solved the full Schrodinger equation. However, since together, they account for both the kinetic energy and interaction contributions, it is possible to use both of these solutions to numerically solve the full TDSE. 
+
+To do this, we will need to figure out how to numerically transform the wavefunction from either space to the other. Consider the Fourier transform of $\psi(x,t)$ seen above.
+Our first step in numerically solving for $\widetilde { \psi } (k,t)$ is to instead integrate over finite interval that provides a reasonably close approximation.
+Then, we use our discretized position space to convert the integral to a sum.
+At this point, we have,
+	\begin{align}
+	\widetilde { \psi } ( k , t ) &= \frac { 1 } { \sqrt { 2 \pi } } \int _ { - \infty } ^ { \infty } \psi ( x , t ) e ^ { - i k x } d x\\
+	\Rightarrow \widetilde { \psi } ( k , t ) &\approx 
+	 \frac { 1 } { \sqrt { 2 \pi } } \mysum { n=1}{N} \psi \left( x _ { n } , t \right) e ^ { - i k x _ { n } } \Delta x
+	\end{align}
+where $N = \frac{x_N-x_0}{\Delta x}$ is the number of steps in in the summation.
+
+It follows that our momentum space is discretized in intervals of $\Delta k=\frac{2\pi}{N \Delta x}$.
+Thus, our discrete points in $k$-space are of the form $k_m = k_0 + m\Delta k$.
+We now have our discrete Fourier transform (DFT),
+	\begin{align}
+	 \widetilde { \psi } ( k_m , t ) &\approx 
+	 \frac { 1 } { \sqrt { 2 \pi } }  \mysum { n=1}{N} \psi \left( x _ { n } , t \right) e ^ { - i k_m x _ { n } } \Delta x
+	\end{align}
+This calculation is performed using SciPy's \textit{fftpack} module.
+This also contains the method to calculate discrete inverse fourier transform,
+
+	
+Given that $x_n = x_0+n \Delta x$, all we need to is define our bounds in $x$-space,the start of $k$-space, $k_0$, the number of increments in our spaces, $N$, and our potential barrier with respect to position space.
+With these paramters, we initialize our position space wavefunction as a Gaussian and can then DFT to get our momentum space wavefunction.
+
+
+Now we need to evolve our system numerically.
+To evolve the wavefunctions by a single time step $\Delta t$, we first evolve $\psi(x,t)$ by $\Delta /2$. (So we use the formula previously, except with a factor of $1/2$ in the exponent.) 
+
+Now we can perform a DFT to get our slightly updated momentum space wavefunction.
+We have now (partially) accounted for the effect of the interaction term in the TDSE on our system.
+
+Next, we evolve the momentum space wavefunction a whole time step $\Delta t$, using the method discussed above. And we can then inverse Fourier transform back to get our new position space wavefunction.
+We have now accounted for the effect of the kinetic term in the TDSE on our system.
+
+Now we fully account for the contribution of the interaction term by evolving $\psi(x,t)$ another half time step. After we DFT to get our momentum space wavefunction, we have now accounted for the effect of both the interaction and the kinetic term on our wavefunction over the course of a single time step.
+
+We repeat this process as many times as necessary.
+
+
+
+
+
+
+\end{document}

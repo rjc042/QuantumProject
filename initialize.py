@@ -15,7 +15,7 @@ def gauss_x(x, a, x0, k0):
 
 
 def gauss_k(k, a, x0, k0):
-    ''' Analytical fourier transform of gauss_x(x), above '''
+    ''' (Analytical) Fourier transform of Gaussian '''
     return ((a / np.sqrt(np.pi)) ** 0.5 * np.exp(-0.5 * (a * (k - k0)) ** 2 - 1j * (k - k0) * x0))
 
 
